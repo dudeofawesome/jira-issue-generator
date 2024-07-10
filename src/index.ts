@@ -14,8 +14,8 @@ const issues = await Promise.all(
     .split(/^#\s+(?=\S)/mu)
     .filter((entry) => entry.trim())
     .map(async (raw) => {
-      const summary = raw.split('\n\n')[0]!;
-      const description = raw.split('|\n\n').at(-1);
+      const summary = raw.split('\n\n')[0]!.trim();
+      const description = raw.split('|\n\n').at(-1)?.trim();
 
       const table = raw.match(
         /(?<=\|\s*Key\s*\|\s*Value\s*\|\n\|.+\|.+\|\n).*\|(?=\n)/isu,
@@ -24,6 +24,7 @@ const issues = await Promise.all(
         table?.matchAll(/^\|\s*(?<key>.+?)\s*\|\s*(?<value>.+?)\s*\|$/gimu) ??
           [],
       ).map((row) => row.groups as { key: string; value: string });
+
       const type = rows.find((row) => row.key.toLowerCase() === 'type')
         ?.value as (typeof Issue.Type)['issuetype'];
       const priority = rows.find((row) => row.key.toLowerCase() === 'priority')
