@@ -2,7 +2,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { stringify } from 'csv-stringify/sync';
 import { Schema as S } from '@effect/schema';
-import { BulkCreateConfiguration, Issue } from 'types.js';
+import { BulkCreateConfiguration, Issue } from './types.js';
+import { MarkdownToMarkup } from './utils.js';
 
 const input_filename = process.argv[2]!;
 const input_filename_base = basename(input_filename, '.md');
@@ -15,7 +16,9 @@ const issues = await Promise.all(
     .filter((entry) => entry.trim())
     .map(async (raw) => {
       const summary = raw.split('\n\n')[0]!.trim();
-      const description = raw.split('|\n\n').at(-1)?.trim();
+      const description = MarkdownToMarkup(
+        raw.split('|\n\n').at(-1)?.trim() ?? '',
+      );
 
       const table = raw.match(
         /(?<=\|\s*Key\s*\|\s*Value\s*\|\n\|.+\|.+\|\n).*\|(?=\n)/isu,
