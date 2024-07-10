@@ -1,6 +1,6 @@
 import { basename } from 'node:path';
 import { stringify } from 'csv-stringify/sync';
-import { Console, Effect, pipe } from 'effect';
+import { Console, Effect } from 'effect';
 import { FileSystem } from '@effect/platform/FileSystem';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
 import { Args, Command, Options } from '@effect/cli';

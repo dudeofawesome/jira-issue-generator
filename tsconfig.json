@@ -6,7 +6,8 @@
   ],
   "compilerOptions": {
     "baseUrl": "src/",
-    "outDir": "dist/"
+    "outDir": "dist/",
+    "skipLibCheck": true
   },
   "include": ["./"],
   "exclude": ["dist/", "coverage/"]
