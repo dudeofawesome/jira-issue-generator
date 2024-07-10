@@ -1,0 +1,8 @@
+// A list of recommended extensions for this workspace.
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
+  ]
+}

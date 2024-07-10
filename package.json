@@ -1,0 +1,40 @@
+{
+  "name": "jira-issue-generator",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Generate CSV files for importing issues into Jira from markdown files.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "concurrently --raw --group 'npm:build:*'",
+    "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
+    "check": "concurrently --raw --group 'npm:test' 'npm:lint'",
+    "lint": "concurrently --raw --group 'npm:lint:*'",
+    "lint:js": "eslint . --ext ts,json --cache",
+    "lint:types": "tsc --noEmit --pretty",
+    "test": "node $NODE_OPTS --import=tsx --test $(glob --ignore '**/node_modules/**' --ignore '**/dist/**' '**/*[.-_]test.?(c|m)[jt]s' '**/test?(-*).?(c|m)[jt]s' '**/test/**/*.?(c|m)[jt]s')",
+    "test:debug": "NODE_OPTS='--inspect-brk' npm run test"
+  },
+  "dependencies": {
+    "@effect/schema": "^0.68.18",
+    "csv-stringify": "^6.5.0"
+  },
+  "devDependencies": {
+    "@code-style/code-style": "^2.0.0-32",
+    "@code-style/eslint-config": "^2.0.0-32",
+    "@code-style/eslint-config-cli": "^2.0.0-32",
+    "@code-style/eslint-config-esmodule": "^2.0.0-32",
+    "@code-style/eslint-config-node": "^2.0.0-32",
+    "@code-style/eslint-config-typescript": "^2.0.0-32",
+    "@code-style/typescript-configs": "^2.0.0-32",
+    "@types/node": "^20.14.10",
+    "concurrently": "^8.2.2",
+    "esbuild": "^0.23.0",
+    "glob": "^11.0.0",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  },
+  "engines": {
+    "node": "^20"
+  }
+}
