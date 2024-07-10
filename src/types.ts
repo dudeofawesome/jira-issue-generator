@@ -12,13 +12,26 @@ export enum Priority {
   MINOR = '4',
 }
 
+export enum Status {
+  OPEN = 'Open',
+  TODO = 'Todo',
+}
+
 export const Issue = S.Struct({
-  issuetype: S.Enums(IssueType),
   parent: S.String,
+  issuetype: S.optional(S.UndefinedOr(S.Enums(IssueType)), {
+    default: () => IssueType.STORY,
+  }),
+  status: S.optional(S.UndefinedOr(S.Enums(Status)), {
+    default: () => Status.OPEN,
+  }),
 
   summary: S.String.pipe(S.nonEmpty()),
   description: S.optional(S.String.pipe(S.nonEmpty())),
-  priority: S.optional(S.Enums(Priority)),
+  priority: S.optional(S.UndefinedOr(S.Enums(Priority)), {
+    default: () => Priority.MINOR,
+  }),
+  labels: S.optional(S.String),
 
   assignee: S.optional(S.String),
   dev_team: S.String,

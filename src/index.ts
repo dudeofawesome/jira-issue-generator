@@ -30,23 +30,30 @@ const issues = await Promise.all(
 
       const type = rows.find((row) => row.key.toLowerCase() === 'type')
         ?.value as (typeof Issue.Type)['issuetype'];
+      const status = rows.find((row) => row.key.toLowerCase() === 'status')
+        ?.value as (typeof Issue.Type)['status'];
       const priority = rows.find((row) => row.key.toLowerCase() === 'priority')
         ?.value as (typeof Issue.Type)['priority'];
+      const labels = rows.find(
+        (row) => row.key.toLowerCase() === 'labels',
+      )?.value;
       const assignee = rows.find(
         (row) => row.key.toLowerCase() === 'assignee',
       )?.value;
 
-      return await S.encodePromise(Issue)({
+      return await S.decodePromise(Issue)({
+        parent: 'PAC-21694',
         issuetype: type,
-        parent: 'PAC-21692',
+        status,
 
         summary,
         description,
         priority,
+        labels,
 
         dev_team: 'Integrations',
         assignee,
-      } satisfies typeof Issue.Type);
+      });
     }),
 );
 
@@ -92,6 +99,11 @@ await Promise.all([
           priority: {
             'jira.field': 'priority',
             userChanged: 'false',
+            manualMapping: 'false',
+          },
+          labels: {
+            'jira.field': 'labels',
+            userChanged: 'true',
             manualMapping: 'false',
           },
 
