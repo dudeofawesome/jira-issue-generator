@@ -1,0 +1,57 @@
+name: 'Publish NPM Package'
+
+on:
+  push:
+    branches: ['*']
+    tags-ignore: ['*']
+  pull_request:
+
+permissions:
+  contents: 'read'
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Setup node 🛎️'
+        uses: 'dudeofawesome/actions/node-setup@a850bdff4354bdb891a86116f0378f8a890e2c16' # v1
+      - name: 'Build 🏗️'
+        run: 'npm run build'
+
+  lint:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Setup node 🛎️'
+        uses: 'dudeofawesome/actions/node-setup@a850bdff4354bdb891a86116f0378f8a890e2c16' # v1
+      - name: 'Lint 🧪'
+        run: 'npm run lint'
+
+  test:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Setup node 🛎️'
+        uses: 'dudeofawesome/actions/node-setup@a850bdff4354bdb891a86116f0378f8a890e2c16' # v1
+      - name: 'Test 🧪'
+        run: 'npm run test'
+
+  publish:
+    runs-on: 'ubuntu-latest'
+    environment: 'production'
+    permissions:
+      id-token: 'write'
+      packages: 'write'
+      contents: 'write'
+    needs:
+      - 'build'
+      - 'lint'
+      - 'test'
+    steps:
+      - name: 'Setup node 🛎️'
+        uses: 'dudeofawesome/actions/node-setup@a850bdff4354bdb891a86116f0378f8a890e2c16' # v1
+        with:
+          install-modules: false
+
+      - name: 'Publish to NPM 🚀'
+        env:
+          NODE_AUTH_TOKEN: '${{ secrets.NPM_AUTH_TOKEN }}'
+        uses: 'dudeofawesome/actions/npm-publish@a850bdff4354bdb891a86116f0378f8a890e2c16' # v1
