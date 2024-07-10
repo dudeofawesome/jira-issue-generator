@@ -2,12 +2,15 @@ import { Schema as S } from '@effect/schema';
 import { Issue } from './types.js';
 import { MarkdownToMarkup } from './utils.js';
 
-export function parseMarkdown(markdown: string) {
-  return Promise.all(
+export function parseMarkdown(
+  markdown: string,
+  { parent, dev_team_name }: { parent: string; dev_team_name: string },
+) {
+  return S.decode(S.Array(Issue))(
     markdown
       .split(/^#\s+(?=\S)/mu)
       .filter((entry) => entry.trim())
-      .map(async (raw) => {
+      .map((raw) => {
         const summary = raw.split('\n\n')[0]!.trim();
         const description = MarkdownToMarkup(
           raw.split('|\n\n').at(-1)?.trim() ?? '',
@@ -35,8 +38,8 @@ export function parseMarkdown(markdown: string) {
           (row) => row.key.toLowerCase() === 'assignee',
         )?.value;
 
-        return await S.decodePromise(Issue)({
-          parent: 'PAC-21694',
+        return {
+          parent: parent,
           issuetype: type,
           status,
 
@@ -45,9 +48,9 @@ export function parseMarkdown(markdown: string) {
           priority,
           labels,
 
-          dev_team: 'Integrations',
+          dev_team: dev_team_name,
           assignee,
-        });
+        } satisfies typeof Issue.Type;
       }),
   );
 }

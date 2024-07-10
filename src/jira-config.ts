@@ -1,8 +1,16 @@
 import { Schema as S } from '@effect/schema';
 import { BulkCreateConfiguration } from './types.js';
 
-export function generateJiraConfig() {
-  return S.encodePromise(BulkCreateConfiguration)({
+export function generateJiraConfig({
+  dev_team_id,
+  project_key,
+  project_name,
+}: {
+  dev_team_id: string;
+  project_name: string;
+  project_key: string;
+}) {
+  return S.encode(BulkCreateConfiguration)({
     'config.version': '2.0',
     'config.encoding': 'UTF-8',
 
@@ -43,7 +51,7 @@ export function generateJiraConfig() {
       },
 
       dev_team: {
-        'existing.custom.field': '10055',
+        'existing.custom.field': dev_team_id,
         userChanged: 'true',
         manualMapping: 'false',
       },
@@ -56,8 +64,8 @@ export function generateJiraConfig() {
     'config.value.mappings': {},
 
     'config.project': {
-      'project.key': 'INT',
-      'project.name': 'Integrations',
+      'project.key': project_key,
+      'project.name': project_name,
     },
   } satisfies typeof BulkCreateConfiguration.Type);
 }

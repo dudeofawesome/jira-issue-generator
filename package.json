@@ -16,8 +16,12 @@
     "test:debug": "NODE_OPTS='--inspect-brk' npm run test"
   },
   "dependencies": {
+    "@effect/cli": "^0.37.4",
+    "@effect/platform": "^0.58.21",
+    "@effect/platform-node": "^0.53.20",
     "@effect/schema": "^0.68.18",
-    "csv-stringify": "^6.5.0"
+    "csv-stringify": "^6.5.0",
+    "effect": "^3.4.8"
   },
   "devDependencies": {
     "@code-style/code-style": "^2.0.0-32",
