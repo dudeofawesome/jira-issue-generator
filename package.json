@@ -1,10 +1,10 @@
 {
   "name": "jira-issue-generator",
   "version": "0.0.1",
-  "private": true,
   "description": "Generate CSV files for importing issues into Jira from markdown files.",
   "license": "MIT",
   "type": "module",
+  "bin": "dist/jira-issue-generator.js",
   "scripts": {
     "build": "concurrently --raw --group 'npm:build:*'",
     "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
@@ -35,6 +35,6 @@
     "typescript": "^5.5.3"
   },
   "engines": {
-    "node": "^20"
+    "node": ">=18"
   }
 }
