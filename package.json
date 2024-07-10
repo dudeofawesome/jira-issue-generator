@@ -2,9 +2,26 @@
   "name": "jira-issue-generator",
   "version": "0.0.1",
   "description": "Generate CSV files for importing issues into Jira from markdown files.",
+  "keywords": [
+    "jira",
+    "csv",
+    "import",
+    "generator",
+    "issue"
+  ],
+  "homepage": "https://github.com/dudeofawesome/jira-issue-generator/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dudeofawesome/jira-issue-generator.git"
+  },
   "license": "MIT",
+  "author": "Louis Orleans <louis@orleans.io>",
   "type": "module",
+  "main": "dist/index.js",
   "bin": "dist/jira-issue-generator.js",
+  "files": [
+    "./dist/"
+  ],
   "scripts": {
     "build": "concurrently --raw --group 'npm:build:*'",
     "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
@@ -40,5 +57,9 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
