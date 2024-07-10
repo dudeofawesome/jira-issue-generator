@@ -2,25 +2,12 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { stringify } from 'csv-stringify/sync';
 import { Schema as S } from '@effect/schema';
+import { BulkCreateConfiguration, Issue } from 'types.js';
 
 const input_filename = process.argv[2]!;
 const input_filename_base = basename(input_filename, '.md');
 
 const markdown = await readFile(input_filename, { encoding: 'utf8' });
-
-export enum IssueType {
-  STORY = 'story',
-  TASK = 'task',
-  BUG = 'bug',
-}
-const Issue = S.Struct({
-  issuetype: S.Enums(IssueType),
-  summary: S.String.pipe(S.nonEmpty()),
-  description: S.optional(S.String.pipe(S.nonEmpty())),
-  assignee: S.optional(S.String),
-  dev_team: S.String,
-  parent: S.String,
-});
 
 const issues = await Promise.all(
   markdown
@@ -39,29 +26,93 @@ const issues = await Promise.all(
       ).map((row) => row.groups as { key: string; value: string });
       const type = rows.find((row) => row.key.toLowerCase() === 'type')
         ?.value as (typeof Issue.Type)['issuetype'];
+      const priority = rows.find((row) => row.key.toLowerCase() === 'priority')
+        ?.value as (typeof Issue.Type)['priority'];
       const assignee = rows.find(
         (row) => row.key.toLowerCase() === 'assignee',
       )?.value;
 
-      return await S.validatePromise(Issue)({
+      return await S.encodePromise(Issue)({
         issuetype: type,
+        parent: 'PAC-21692',
+
         summary,
         description,
+        priority,
 
-        assignee,
         dev_team: 'Integrations',
-        parent: 'PAC-21692',
+        assignee,
       } satisfies typeof Issue.Type);
     }),
 );
 
 const out = stringify(issues, {
   header: true,
-  // columns: ['type', 'summary', 'description', 'assignee'],
-  // escape: '"',
   objectMode: true,
 });
 
-await writeFile(`${input_filename_base}.csv`, out);
+await Promise.all([
+  writeFile(`${input_filename_base}.csv`, out),
+  writeFile(
+    `${input_filename_base}.json`,
+    JSON.stringify(
+      await S.encodePromise(BulkCreateConfiguration)({
+        'config.version': '2.0',
+        'config.encoding': 'UTF-8',
+
+        'config.delimiter': ',',
+        'config.date.format': "yyyy-MM-dd'T'HH:mmZ",
+
+        'config.field.mappings': {
+          issuetype: {
+            'jira.field': 'issuetype',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+          parent: {
+            'jira.field': 'parent',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+
+          summary: {
+            'jira.field': 'summary',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+          description: {
+            'jira.field': 'description',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+          priority: {
+            'jira.field': 'priority',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+
+          dev_team: {
+            'existing.custom.field': '10055',
+            userChanged: 'true',
+            manualMapping: 'false',
+          },
+          assignee: {
+            'jira.field': 'assignee',
+            userChanged: 'false',
+            manualMapping: 'false',
+          },
+        },
+        'config.value.mappings': {},
+
+        'config.project': {
+          'project.key': 'INT',
+          'project.name': 'Integrations',
+        },
+      } satisfies typeof BulkCreateConfiguration.Type),
+      null,
+      2,
+    ),
+  ),
+]);
 
 console.log('Created CSV. Have fun with Jira 😉');
