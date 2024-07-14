@@ -74,7 +74,8 @@ export function parseMarkdown(
 
         return {
           parent: metadata.parent ?? parent,
-          issuetype: metadata.type as (typeof Issue.Type)['issuetype'],
+          issuetype: (metadata.type ??
+            metadata.issuetype) as (typeof Issue.Type)['issuetype'],
           status: metadata.status as (typeof Issue.Type)['status'],
 
           summary,
@@ -83,7 +84,8 @@ export function parseMarkdown(
           priority: metadata.priority as (typeof Issue.Type)['priority'],
           labels: metadata.labels,
 
-          dev_team_name: metadata.dev_team_name ?? dev_team_name,
+          dev_team:
+            metadata.dev_team_name ?? metadata.dev_team ?? dev_team_name,
           assignee: metadata.assignee as (typeof Issue.Type)['assignee'],
         } satisfies typeof Issue.Type;
       }),

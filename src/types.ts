@@ -42,7 +42,7 @@ export const IssueMetadata = S.Struct({
   assignee: S.optional(
     S.TemplateLiteral(S.String, '@', S.String).pipe(S.pattern(/^\S+@\S+$/u)),
   ),
-  dev_team_name: S.String,
+  dev_team: S.String,
 });
 export const Issue = S.Struct({
   ...IssueMetadata.fields,
