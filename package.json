@@ -39,7 +39,8 @@
     "@effect/platform-node": "^0.53.20",
     "@effect/schema": "^0.68.18",
     "csv-stringify": "^6.5.0",
-    "effect": "^3.4.8"
+    "effect": "^3.4.8",
+    "yaml": "^2.4.5"
   },
   "devDependencies": {
     "@code-style/code-style": "^2.0.0-32",

@@ -17,7 +17,15 @@ export enum Status {
   TODO = 'Todo',
 }
 
-export const Issue = S.Struct({
+export const Frontmatter = S.Struct({
+  parent: S.String,
+  'project-name': S.String,
+  'project-key': S.String,
+  'dev-team-name': S.String,
+  'dev-team-field-id': S.Int,
+});
+
+export const IssueMetadata = S.Struct({
   parent: S.String,
   issuetype: S.optional(S.UndefinedOr(S.Enums(IssueType)), {
     default: () => IssueType.STORY,
@@ -26,15 +34,20 @@ export const Issue = S.Struct({
     default: () => Status.OPEN,
   }),
 
-  summary: S.String.pipe(S.nonEmpty()),
-  description: S.optional(S.String.pipe(S.nonEmpty())),
   priority: S.optional(S.UndefinedOr(S.Enums(Priority)), {
     default: () => Priority.MINOR,
   }),
   labels: S.optional(S.String),
 
-  assignee: S.optional(S.String),
-  dev_team: S.String,
+  assignee: S.optional(
+    S.TemplateLiteral(S.String, '@', S.String).pipe(S.pattern(/^\S+@\S+$/u)),
+  ),
+  dev_team_name: S.String,
+});
+export const Issue = S.Struct({
+  ...IssueMetadata.fields,
+  summary: S.String.pipe(S.nonEmpty()),
+  description: S.optional(S.String.pipe(S.nonEmpty())),
 });
 
 export const BulkCreateConfiguration = S.Struct({
@@ -48,7 +61,7 @@ export const BulkCreateConfiguration = S.Struct({
     S.String,
     S.Struct({
       'jira.field': S.optional(S.String),
-      'existing.custom.field': S.optional(S.String),
+      'existing.custom.field': S.optional(S.Number),
       userChanged: S.Union(S.Literal('true'), S.Literal('false')),
       manualMapping: S.Union(S.Literal('true'), S.Literal('false')),
     }),

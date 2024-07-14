@@ -2,11 +2,11 @@ import { Schema as S } from '@effect/schema';
 import { BulkCreateConfiguration } from './types.js';
 
 export function generateJiraConfig({
-  dev_team_id,
+  dev_team_field_id,
   project_key,
   project_name,
 }: {
-  dev_team_id: string;
+  dev_team_field_id: number;
   project_name: string;
   project_key: string;
 }) {
@@ -51,7 +51,7 @@ export function generateJiraConfig({
       },
 
       dev_team: {
-        'existing.custom.field': dev_team_id,
+        'existing.custom.field': dev_team_field_id,
         userChanged: 'true',
         manualMapping: 'false',
       },
