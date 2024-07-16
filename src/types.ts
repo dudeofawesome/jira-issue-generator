@@ -61,7 +61,7 @@ export const BulkCreateConfiguration = S.Struct({
     S.String,
     S.Struct({
       'jira.field': S.optional(S.String),
-      'existing.custom.field': S.optional(S.Number),
+      'existing.custom.field': S.optional(S.NumberFromString),
       userChanged: S.Union(S.Literal('true'), S.Literal('false')),
       manualMapping: S.Union(S.Literal('true'), S.Literal('false')),
     }),
