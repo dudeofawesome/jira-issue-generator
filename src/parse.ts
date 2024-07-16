@@ -54,7 +54,14 @@ export function parseMarkdown(
           ?.summary!;
         // convert markdown after metadata table to Jira markup
         const description = MarkdownToMarkup(
-          raw.split('|\n\n').at(-1)?.trim() ?? '',
+          raw
+            // find the end of the metadata table
+            .split('|\n\n')
+            .slice(1)
+            .join('|\n\n')
+            // remove comments
+            .replaceAll(/<!--.*?-->/gisu, '')
+            .trim(),
         );
 
         // find metadata table
