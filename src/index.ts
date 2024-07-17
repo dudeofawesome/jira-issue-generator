@@ -112,10 +112,6 @@ export function main() {
                       ),
                     ),
                     generateJiraConfig(options).pipe(
-                      // We use JSON.stringify instead of Effect's stringify because we want the output formatted
-                      Effect.andThen((config) =>
-                        JSON.stringify(config, null, 2),
-                      ),
                       Effect.tap((json) =>
                         fs.writeFileString(`${input_filename_base}.json`, json),
                       ),

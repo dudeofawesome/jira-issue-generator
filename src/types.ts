@@ -50,30 +50,33 @@ export const Issue = S.Struct({
   description: S.optional(S.String.pipe(S.nonEmpty())),
 });
 
-export const BulkCreateConfiguration = S.Struct({
-  'config.version': S.Literal('2.0'),
-  'config.encoding': S.Literal('UTF-8'),
+export const BulkCreateConfiguration = S.parseJson(
+  S.Struct({
+    'config.version': S.Literal('2.0'),
+    'config.encoding': S.Literal('UTF-8'),
 
-  'config.delimiter': S.Literal(','),
-  'config.date.format': S.String,
+    'config.delimiter': S.Literal(','),
+    'config.date.format': S.String,
 
-  'config.field.mappings': S.Record(
-    S.String,
-    S.Struct({
-      'jira.field': S.optional(S.String),
-      'existing.custom.field': S.optional(S.NumberFromString),
-      userChanged: S.Union(S.Literal('true'), S.Literal('false')),
-      manualMapping: S.Union(S.Literal('true'), S.Literal('false')),
+    'config.field.mappings': S.Record(
+      S.String,
+      S.Struct({
+        'jira.field': S.optional(S.String),
+        'existing.custom.field': S.optional(S.NumberFromString),
+        userChanged: S.Union(S.Literal('true'), S.Literal('false')),
+        manualMapping: S.Union(S.Literal('true'), S.Literal('false')),
+      }),
+    ),
+    'config.value.mappings': S.Record(S.String, S.Never),
+
+    'config.project': S.Struct({
+      'project.key': S.String,
+      'project.name': S.String,
+      'project.type': S.optional(S.NullOr(S.String)),
+      'project.description': S.optional(S.NullOr(S.String)),
+      'project.url': S.optional(S.NullOr(S.String)),
+      'project.lead': S.optional(S.String),
     }),
-  ),
-  'config.value.mappings': S.Record(S.String, S.Never),
-
-  'config.project': S.Struct({
-    'project.key': S.String,
-    'project.name': S.String,
-    'project.type': S.optional(S.NullOr(S.String)),
-    'project.description': S.optional(S.NullOr(S.String)),
-    'project.url': S.optional(S.NullOr(S.String)),
-    'project.lead': S.optional(S.String),
   }),
-});
+  { space: 2 },
+);
