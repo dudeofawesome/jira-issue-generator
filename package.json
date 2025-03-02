@@ -11,15 +11,17 @@
   "author": "Louis Orleans <louis@orleans.io>",
   "type": "module",
   "scripts": {
-    "build": "pnpm run build -w packages/markdown-to-jira-markup; npm run build --workspaces --if-present",
+    "prebuild": "pnpm run -C packages/markdown-to-jira-markup build",
+    "build": "pnpm run --recursive --aggregate-output build",
     "check": "concurrently --raw --group \"pnpm:test\" \"pnpm:lint\"",
-    "dev": "concurrently --names 'back,front,shared' 'pnpm run dev -w packages/backend' 'pnpm run dev -w packages/frontend' 'pnpm run dev -w packages/shared'",
+    "dev": "pnpm run --recursive dev",
     "prelint": "pnpm run build",
-    "lint": "pnpm run lint --workspaces --if-present && eslint . && tsc --noEmit",
+    "lint": "pnpm run --recursive --aggregate-output lint && eslint . && tsc --noEmit",
     "pretest": "pnpm run build",
-    "test": "pnpm run test --workspaces && echo 'All tests passed.'"
+    "test": "pnpm run --recursive --aggregate-output test --run && echo 'All tests passed.'"
   },
   "devDependencies": {
+    "@code-style/code-style": "catalog:",
     "concurrently": "^8.2.2"
   },
   "engines": {
