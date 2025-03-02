@@ -1,0 +1,27 @@
+packages:
+  - 'packages/*'
+
+catalog:
+  '@code-style/code-style': '^2.0.0-32'
+  '@code-style/eslint-config': '^2.0.0-32'
+  '@code-style/eslint-config-cli': '^2.0.0-32'
+  '@code-style/eslint-config-esmodule': '^2.0.0-32'
+  '@code-style/eslint-config-node': '^2.0.0-32'
+  '@code-style/eslint-config-typescript': '^2.0.0-32'
+  '@code-style/typescript-configs': '^2.0.0-32'
+
+  '@effect/language-service': '^0.3.0'
+  '@effect/vitest': '^0.19.2'
+
+  '@types/node': '^20.14.10'
+
+  '@types/common-tags': '^1.8.4'
+  'common-tags': '^1.8.2'
+
+  'concurrently': '^8.2.2'
+  'esbuild': '^0.23.0'
+  'glob': '^11.0.0'
+  'tsx': '^4.16.2'
+  'typescript': '^5.5.3'
+
+  'vitest': '^3.0.7'

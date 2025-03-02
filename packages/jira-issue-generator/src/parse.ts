@@ -1,10 +1,9 @@
-import { Schema as S } from '@effect/schema';
-import { Effect } from 'effect';
-import { ParseError } from '@effect/schema/ParseResult';
+import { Effect, Schema as S, ParseResult } from 'effect';
 import { TaggedError } from 'effect/Data';
 import { parse, YAMLParseError } from 'yaml';
+import { MarkdownToMarkup } from '@dudeofawesome/markdown-to-jira-markup';
+
 import { Issue } from './types.js';
-import { MarkdownToMarkup } from './utils.js';
 
 export class YamlParsingError extends TaggedError('YamlParsingError')<{
   message: string;
@@ -14,7 +13,7 @@ export function parseFrontmatter<I, A>(
   schema: S.Schema<A, I>,
 ): Effect.Effect<
   readonly [S.Schema.Type<typeof schema>, string],
-  ParseError | YamlParsingError
+  ParseResult.ParseError | YamlParsingError
 > {
   return Effect.gen(function* () {
     // split frontmatter from body

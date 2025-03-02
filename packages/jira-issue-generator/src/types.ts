@@ -1,4 +1,4 @@
-import { Schema as S } from '@effect/schema';
+import { Schema as S } from 'effect';
 
 export enum IssueType {
   STORY = 'story',
@@ -27,16 +27,16 @@ export const Frontmatter = S.Struct({
 
 export const IssueMetadata = S.Struct({
   parent: S.String,
-  issuetype: S.optional(S.UndefinedOr(S.Enums(IssueType)), {
-    default: () => IssueType.STORY,
-  }),
-  status: S.optional(S.UndefinedOr(S.Enums(Status)), {
-    default: () => Status.OPEN,
-  }),
+  issuetype: S.optional(S.UndefinedOr(S.Enums(IssueType))).pipe(
+    S.withDecodingDefault(() => IssueType.STORY),
+  ),
+  status: S.optional(S.UndefinedOr(S.Enums(Status))).pipe(
+    S.withDecodingDefault(() => Status.OPEN),
+  ),
 
-  priority: S.optional(S.UndefinedOr(S.Enums(Priority)), {
-    default: () => Priority.MINOR,
-  }),
+  priority: S.optional(S.UndefinedOr(S.Enums(Priority))).pipe(
+    S.withDecodingDefault(() => Priority.MINOR),
+  ),
   labels: S.optional(S.String),
 
   assignee: S.optional(
@@ -46,8 +46,8 @@ export const IssueMetadata = S.Struct({
 });
 export const Issue = S.Struct({
   ...IssueMetadata.fields,
-  summary: S.String.pipe(S.nonEmpty()),
-  description: S.optional(S.String.pipe(S.nonEmpty())),
+  summary: S.NonEmptyString,
+  description: S.optional(S.NonEmptyString),
 });
 
 export const BulkCreateConfiguration = S.parseJson(
@@ -58,16 +58,16 @@ export const BulkCreateConfiguration = S.parseJson(
     'config.delimiter': S.Literal(','),
     'config.date.format': S.String,
 
-    'config.field.mappings': S.Record(
-      S.String,
-      S.Struct({
+    'config.field.mappings': S.Record({
+      key: S.String,
+      value: S.Struct({
         'jira.field': S.optional(S.String),
         'existing.custom.field': S.optional(S.NumberFromString),
         userChanged: S.Union(S.Literal('true'), S.Literal('false')),
         manualMapping: S.Union(S.Literal('true'), S.Literal('false')),
       }),
-    ),
-    'config.value.mappings': S.Record(S.String, S.Never),
+    }),
+    'config.value.mappings': S.Record({ key: S.String, value: S.Never }),
 
     'config.project': S.Struct({
       'project.key': S.String,
