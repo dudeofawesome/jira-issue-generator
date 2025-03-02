@@ -22,7 +22,8 @@
   },
   "devDependencies": {
     "@code-style/code-style": "catalog:",
-    "concurrently": "^8.2.2"
+    "concurrently": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "npm": "please-use-pnpm"

@@ -5,7 +5,7 @@ import { FileSystem } from '@effect/platform/FileSystem';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
 import { Args, Command, Options } from '@effect/cli';
 
-import { parseFrontmatter, parseMarkdown } from './parse.js';
+import { parseFrontmatter, parseMarkdownToIssues } from './parse.js';
 import { generateJiraConfig } from './jira-config.js';
 import { Frontmatter } from './types.js';
 
@@ -100,7 +100,7 @@ export function main() {
                 ),
                 Effect.andThen(([options, markdown_str]) =>
                   Effect.all([
-                    parseMarkdown(markdown_str, options).pipe(
+                    parseMarkdownToIssues(markdown_str, options).pipe(
                       Effect.andThen((issues) =>
                         stringify(Array.from(issues), {
                           header: true,

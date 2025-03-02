@@ -1,5 +1,6 @@
 import { Effect, Schema as S, ParseResult } from 'effect';
 import { TaggedError } from 'effect/Data';
+import { ParseError } from 'effect/ParseResult';
 import { parse, YAMLParseError } from 'yaml';
 import { MarkdownToMarkup } from '@dudeofawesome/markdown-to-jira-markup';
 
@@ -37,10 +38,10 @@ export function parseFrontmatter<I, A>(
   });
 }
 
-export function parseMarkdown(
+export function parseMarkdownToIssues(
   markdown: string,
   { parent, dev_team_name }: { parent: string; dev_team_name: string },
-) {
+): Effect.Effect<readonly (typeof Issue.Type)[], ParseError> {
   return S.decode(S.Array(Issue))(
     markdown
       // split on horizontal rules
