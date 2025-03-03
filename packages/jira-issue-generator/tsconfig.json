@@ -1,0 +1,15 @@
+// In order to update the this config, update @code-style/typescript-configs
+{
+  "extends": [
+    "@code-style/typescript-configs/roles/node",
+    "@code-style/typescript-configs/layers/esmodule"
+  ],
+  "compilerOptions": {
+    "baseUrl": "src/",
+    "outDir": "dist/",
+    "skipLibCheck": true,
+    "plugins": [{ "name": "@effect/language-service" }]
+  },
+  "include": ["./"],
+  "exclude": ["dist/", "coverage/"]
+}

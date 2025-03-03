@@ -1,14 +1,7 @@
 {
-  "name": "jira-issue-generator",
-  "version": "2.1.2",
-  "description": "Generate CSV files for importing issues into Jira from markdown files.",
-  "keywords": [
-    "jira",
-    "csv",
-    "import",
-    "generator",
-    "issue"
-  ],
+  "name": "@jira-issue-generator/root",
+  "version": "0.0.0-unversioned",
+  "private": true,
   "homepage": "https://github.com/dudeofawesome/jira-issue-generator/blob/master/README.md",
   "repository": {
     "type": "git",
@@ -17,51 +10,22 @@
   "license": "MIT",
   "author": "Louis Orleans <louis@orleans.io>",
   "type": "module",
-  "main": "dist/index.js",
-  "bin": "dist/jira-issue-generator.js",
-  "files": [
-    "./dist/"
-  ],
   "scripts": {
-    "build": "concurrently --raw --group 'npm:build:*'",
-    "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
-    "check": "concurrently --raw --group 'npm:test' 'npm:lint'",
-    "lint": "concurrently --raw --group 'npm:lint:*'",
-    "lint:js": "eslint . --ext ts,json --cache",
-    "lint:types": "tsc --noEmit --pretty",
-    "prepublishOnly": "npm run build",
-    "test": "node $NODE_OPTS --import=tsx --test $(glob --ignore '**/node_modules/**' --ignore '**/dist/**' '**/*[.-_]test.?(c|m)[jt]s' '**/test?(-*).?(c|m)[jt]s' '**/test/**/*.?(c|m)[jt]s')",
-    "test:debug": "NODE_OPTS='--inspect-brk' npm run test"
-  },
-  "dependencies": {
-    "@effect/cli": "^0.37.4",
-    "@effect/platform": "^0.58.21",
-    "@effect/platform-node": "^0.53.20",
-    "@effect/schema": "^0.68.18",
-    "csv-stringify": "^6.5.0",
-    "effect": "^3.4.8",
-    "yaml": "^2.4.5"
+    "prebuild": "pnpm run -C packages/markdown-to-jira-markup build",
+    "build": "pnpm run --recursive --aggregate-output build",
+    "check": "concurrently --raw --group \"pnpm:test\" \"pnpm:lint\"",
+    "dev": "pnpm run --recursive dev",
+    "prelint": "pnpm run build",
+    "lint": "pnpm run --recursive --aggregate-output lint && eslint . && tsc --noEmit",
+    "pretest": "pnpm run build",
+    "test": "pnpm run --recursive --aggregate-output test --run && echo 'All tests passed.'"
   },
   "devDependencies": {
-    "@code-style/code-style": "^2.0.0-32",
-    "@code-style/eslint-config": "^2.0.0-32",
-    "@code-style/eslint-config-cli": "^2.0.0-32",
-    "@code-style/eslint-config-esmodule": "^2.0.0-32",
-    "@code-style/eslint-config-node": "^2.0.0-32",
-    "@code-style/eslint-config-typescript": "^2.0.0-32",
-    "@code-style/typescript-configs": "^2.0.0-32",
-    "@types/node": "^20.14.10",
-    "concurrently": "^8.2.2",
-    "esbuild": "^0.23.0",
-    "glob": "^11.0.0",
-    "tsx": "^4.16.2",
-    "typescript": "^5.5.3"
+    "@code-style/code-style": "catalog:",
+    "concurrently": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
-    "node": ">=18"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "npm": "please-use-pnpm"
   }
 }

@@ -1,0 +1,42 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": ".",
+    },
+    { "path": "packages/jira-issue-generator" },
+    { "path": "packages/markdown-to-jira-markup" },
+  ],
+  "settings": {
+    "files.exclude": {
+      "packages/": true,
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "typescript.format.enable": false,
+    "javascript.format.enable": false,
+
+    "typescript.tsdk": "./node_modules/typescript/lib",
+
+    "[nix]": {
+      "editor.defaultFormatter": "jnoortheen.nix-ide",
+    },
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil",
+    "nix.formatterPath": ["nix", "fmt", "--", "--"],
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "editorconfig.editorconfig",
+      "effectful-tech.effect-vscode",
+      "esbenp.prettier-vscode",
+      "jnoortheen.nix-ide",
+      "streetsidesoftware.code-spell-checker",
+      "vitest.explorer",
+      "YoavBls.pretty-ts-errors",
+    ],
+  },
+}

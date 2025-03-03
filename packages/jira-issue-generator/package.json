@@ -1,0 +1,75 @@
+{
+  "name": "jira-issue-generator",
+  "version": "2.1.2",
+  "description": "Generate CSV files for importing issues into Jira from markdown files.",
+  "keywords": [
+    "jira",
+    "csv",
+    "import",
+    "generator",
+    "issue"
+  ],
+  "homepage": "https://github.com/dudeofawesome/jira-issue-generator/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dudeofawesome/jira-issue-generator.git"
+  },
+  "license": "MIT",
+  "author": "Louis Orleans <louis@orleans.io>",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": "dist/jira-issue-generator.js",
+  "files": [
+    "./dist/"
+  ],
+  "scripts": {
+    "build": "concurrently --raw --group 'pnpm:build:*'",
+    "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
+    "check": "concurrently --raw --group 'pnpm:test' 'pnpm:lint'",
+    "predev": "pnpm run -C ../markdown-to-jira-markup build",
+    "dev": "tsx src/jira-issue-generator.ts",
+    "lint": "concurrently --raw --group 'pnpm:lint:*'",
+    "lint:js": "eslint . --ext ts,json --cache",
+    "lint:types": "tsc --noEmit --pretty",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest",
+    "test:debug": "pnpm run test -- --inspectBrk"
+  },
+  "dependencies": {
+    "@dudeofawesome/markdown-to-jira-markup": "workspace:^",
+    "@effect/cli": "^0.56.4",
+    "@effect/platform": "^0.77.4",
+    "@effect/platform-node": "^0.73.4",
+    "csv-stringify": "^6.5.0",
+    "effect": "^3.13.4",
+    "yaml": "^2.4.5"
+  },
+  "devDependencies": {
+    "@code-style/code-style": "catalog:",
+    "@code-style/eslint-config": "catalog:",
+    "@code-style/eslint-config-cli": "catalog:",
+    "@code-style/eslint-config-esmodule": "catalog:",
+    "@code-style/eslint-config-node": "catalog:",
+    "@code-style/eslint-config-typescript": "catalog:",
+    "@code-style/typescript-configs": "catalog:",
+    "@effect/experimental": "^0.41.4",
+    "@effect/language-service": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@types/common-tags": "catalog:",
+    "@types/node": "catalog:",
+    "common-tags": "catalog:",
+    "concurrently": "catalog:",
+    "esbuild": "catalog:",
+    "glob": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

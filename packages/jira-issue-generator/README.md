@@ -4,6 +4,7 @@ Generate CSV files for importing issues into Jira from markdown files.
 
 ## Usage
 
+1. Get an API token from [your Atlassian profile security page](https://id.atlassian.com/manage-profile/security/api-tokens).
 1. Create a [Markdown](https://daringfireball.net/projects/markdown/) file.
 1. Create a YAML frontmatter section to specify global metadata
 
@@ -21,7 +22,7 @@ Generate CSV files for importing issues into Jira from markdown files.
 
 1. Specify your Jira issues within it using Markdown syntax
 
-    - A leading level-1 heading (`# like this`) specifies the issue summary
+    - A leading level-1 heading (`# like this`) specifies the issue summary (the title)
     - Optionally add a table underneath to add metadata about the issue
 
         ```md

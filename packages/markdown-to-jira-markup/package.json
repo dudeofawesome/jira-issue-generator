@@ -1,0 +1,66 @@
+{
+  "name": "@dudeofawesome/markdown-to-jira-markup",
+  "version": "0.0.1",
+  "description": "Translate a subset of Markdown syntax to Jira's custom markup language",
+  "keywords": [
+    "jira",
+    "markdown",
+    "markup"
+  ],
+  "homepage": "https://github.com/dudeofawesome/jira-issue-generator/blob/master/packages/markdown-to-jira-markup/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dudeofawesome/jira-issue-generator.git",
+    "directory": "packages/markdown-to-jira-markup"
+  },
+  "license": "MIT",
+  "author": "Louis Orleans <louis@orleans.io>",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "disc/index.d.ts",
+  "files": [
+    "./dist/",
+    "./src/"
+  ],
+  "scripts": {
+    "build": "concurrently --raw --group 'pnpm:build:*'",
+    "build:js": "esbuild --tsconfig=tsconfig.build.json $(glob 'src/**/*.?(c|m)[jt]s' --ignore '**/*.@(spec|test).*') --outdir=dist --sourcemap=inline --platform=node --target=node18 --format=esm",
+    "build:types": "tsc --project tsconfig.build.json --emitDeclarationOnly",
+    "check": "concurrently --raw --group 'pnpm:test' 'pnpm:lint'",
+    "lint": "concurrently --raw --group 'pnpm:lint:*'",
+    "lint:js": "eslint . --ext ts,json --cache",
+    "lint:types": "tsc --noEmit --pretty",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest",
+    "test:debug": "pnpm run test -- --inspectBrk"
+  },
+  "dependencies": {
+    "effect": "^3"
+  },
+  "devDependencies": {
+    "@code-style/code-style": "catalog:",
+    "@code-style/eslint-config": "catalog:",
+    "@code-style/eslint-config-esmodule": "catalog:",
+    "@code-style/eslint-config-node": "catalog:",
+    "@code-style/eslint-config-typescript": "catalog:",
+    "@code-style/typescript-configs": "catalog:",
+    "@effect/language-service": "catalog:",
+    "@effect/vitest": "catalog:",
+    "@types/common-tags": "catalog:",
+    "@types/node": "catalog:",
+    "common-tags": "catalog:",
+    "concurrently": "catalog:",
+    "esbuild": "catalog:",
+    "glob": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

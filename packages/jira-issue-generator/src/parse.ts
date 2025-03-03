@@ -1,10 +1,10 @@
-import { Schema as S } from '@effect/schema';
-import { Effect } from 'effect';
-import { ParseError } from '@effect/schema/ParseResult';
+import { Effect, Schema as S, ParseResult } from 'effect';
 import { TaggedError } from 'effect/Data';
+import { ParseError } from 'effect/ParseResult';
 import { parse, YAMLParseError } from 'yaml';
+import { MarkdownToMarkup } from '@dudeofawesome/markdown-to-jira-markup';
+
 import { Issue } from './types.js';
-import { MarkdownToMarkup } from './utils.js';
 
 export class YamlParsingError extends TaggedError('YamlParsingError')<{
   message: string;
@@ -14,7 +14,7 @@ export function parseFrontmatter<I, A>(
   schema: S.Schema<A, I>,
 ): Effect.Effect<
   readonly [S.Schema.Type<typeof schema>, string],
-  ParseError | YamlParsingError
+  ParseResult.ParseError | YamlParsingError
 > {
   return Effect.gen(function* () {
     // split frontmatter from body
@@ -35,13 +35,25 @@ export function parseFrontmatter<I, A>(
         message: (err as YAMLParseError).message,
       });
     }
-  });
+  }).pipe(
+    Effect.tap(([object, bodymatter]) =>
+      Effect.annotateCurrentSpan({
+        object,
+        bodymatter,
+      }),
+    ),
+    Effect.withSpan(parseFrontmatter.name, { attributes: { text } }),
+  );
 }
 
-export function parseMarkdown(
+export interface GlobalParseOptions {
+  parent: string;
+  dev_team_name: string;
+}
+export function parseMarkdownToIssues(
   markdown: string,
-  { parent, dev_team_name }: { parent: string; dev_team_name: string },
-) {
+  { parent, dev_team_name }: GlobalParseOptions,
+): Effect.Effect<readonly (typeof Issue.Type)[], ParseError> {
   return S.decode(S.Array(Issue))(
     markdown
       // split on horizontal rules
@@ -96,5 +108,15 @@ export function parseMarkdown(
           assignee: metadata.assignee as (typeof Issue.Type)['assignee'],
         } satisfies typeof Issue.Type;
       }),
+  ).pipe(
+    Effect.tap((issues) =>
+      Effect.annotateCurrentSpan({
+        issue_count: issues.length,
+        issue_summaries: issues.map((issue) => `"${issue.summary}"`).join(', '),
+      }),
+    ),
+    Effect.withSpan(parseMarkdownToIssues.name, {
+      attributes: { markdown, parent, dev_team_name },
+    }),
   );
 }
