@@ -17,6 +17,7 @@
   "author": "Louis Orleans <louis@orleans.io>",
   "type": "module",
   "main": "dist/index.js",
+  "types": "disc/index.d.ts",
   "files": [
     "./dist/",
     "./src/"

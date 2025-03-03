@@ -1,15 +1,17 @@
 import { Schema as S } from 'effect';
 import { BulkCreateConfiguration } from './types.js';
 
+export interface JiraConfigOptions {
+  dev_team_field_id: number;
+  project_name: string;
+  project_key: string;
+}
+
 export function generateJiraConfig({
   dev_team_field_id,
   project_key,
   project_name,
-}: {
-  dev_team_field_id: number;
-  project_name: string;
-  project_key: string;
-}) {
+}: JiraConfigOptions) {
   return S.encode(BulkCreateConfiguration)({
     'config.version': '2.0',
     'config.encoding': 'UTF-8',

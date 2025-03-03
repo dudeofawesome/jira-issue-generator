@@ -1,13 +1,13 @@
-import { basename } from 'node:path';
-import { stringify } from 'csv-stringify/sync';
-import { Console, Effect, Option, pipe } from 'effect';
+import { basename, dirname, join } from 'node:path';
+import { Effect, Layer, Option, pipe } from 'effect';
 import { FileSystem } from '@effect/platform/FileSystem';
 import { NodeContext, NodeRuntime } from '@effect/platform-node';
 import { Args, Command, Options } from '@effect/cli';
 
 import { parseFrontmatter, parseMarkdownToIssues } from './parse.js';
-import { generateJiraConfig } from './jira-config.js';
 import { Frontmatter } from './types.js';
+import { output_to_csv } from './output/csv.js';
+import { DevToolsLive } from './utils/devtools.js';
 
 export function main() {
   const name = 'jira-issue-generator';
@@ -60,7 +60,6 @@ export function main() {
       }) =>
         Effect.gen(function* () {
           const fs = yield* FileSystem;
-          const input_filename_base = basename(issues_file, '.md');
 
           return yield* pipe(
             fs.readFileString(issues_file),
@@ -93,36 +92,26 @@ export function main() {
                             onNone: () => frontmatter['project-key'],
                             onSome: (project_key) => project_key,
                           }),
+                          input_filename_base: join(
+                            dirname(issues_file),
+                            basename(issues_file, '.md'),
+                          ),
                         },
                         markdown_str,
                       ] as const,
                   ),
                 ),
                 Effect.andThen(([options, markdown_str]) =>
-                  Effect.all([
-                    parseMarkdownToIssues(markdown_str, options).pipe(
-                      Effect.andThen((issues) =>
-                        stringify(Array.from(issues), {
-                          header: true,
-                          objectMode: true,
-                        }),
-                      ),
-                      Effect.tap((csv) =>
-                        fs.writeFileString(`${input_filename_base}.csv`, csv),
-                      ),
+                  Effect.Do.pipe(
+                    Effect.let('options', () => options),
+                    Effect.bind('issues', () =>
+                      parseMarkdownToIssues(markdown_str, options),
                     ),
-                    generateJiraConfig(options).pipe(
-                      Effect.tap((json) =>
-                        fs.writeFileString(`${input_filename_base}.json`, json),
-                      ),
-                    ),
-                  ]),
+
+                    Effect.andThen((inputs) => output_to_csv(inputs)),
+                  ),
                 ),
               ),
-            ),
-          ).pipe(
-            Effect.andThen(
-              Console.log(`Created CSV & config JSON. Have fun with Jira 😉`),
             ),
           );
         }),
@@ -134,8 +123,8 @@ export function main() {
     { name, version: '0.0.1' },
   );
 
-  Effect.suspend(() => cli(process.argv)).pipe(
-    Effect.provide(NodeContext.layer),
+  Effect.suspend(() => cli(process.argv).pipe(Effect.withSpan('cli'))).pipe(
+    Effect.provide(Layer.mergeAll(NodeContext.layer, DevToolsLive)),
     NodeRuntime.runMain,
   );
 }

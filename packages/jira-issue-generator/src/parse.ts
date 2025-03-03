@@ -35,12 +35,24 @@ export function parseFrontmatter<I, A>(
         message: (err as YAMLParseError).message,
       });
     }
-  });
+  }).pipe(
+    Effect.tap(([object, bodymatter]) =>
+      Effect.annotateCurrentSpan({
+        object,
+        bodymatter,
+      }),
+    ),
+    Effect.withSpan(parseFrontmatter.name, { attributes: { text } }),
+  );
 }
 
+export interface GlobalParseOptions {
+  parent: string;
+  dev_team_name: string;
+}
 export function parseMarkdownToIssues(
   markdown: string,
-  { parent, dev_team_name }: { parent: string; dev_team_name: string },
+  { parent, dev_team_name }: GlobalParseOptions,
 ): Effect.Effect<readonly (typeof Issue.Type)[], ParseError> {
   return S.decode(S.Array(Issue))(
     markdown
@@ -96,5 +108,15 @@ export function parseMarkdownToIssues(
           assignee: metadata.assignee as (typeof Issue.Type)['assignee'],
         } satisfies typeof Issue.Type;
       }),
+  ).pipe(
+    Effect.tap((issues) =>
+      Effect.annotateCurrentSpan({
+        issue_count: issues.length,
+        issue_summaries: issues.map((issue) => `"${issue.summary}"`).join(', '),
+      }),
+    ),
+    Effect.withSpan(parseMarkdownToIssues.name, {
+      attributes: { markdown, parent, dev_team_name },
+    }),
   );
 }

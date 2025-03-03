@@ -62,6 +62,40 @@ describe('parse', () => {
           },
         ] satisfies (typeof Issue.Type)[],
       },
+      {
+        title: 'table in description',
+        input: stripIndent`
+          # Summary
+
+          | Key  | Value |
+          | ---- | ----- |
+          | type | story |
+
+          description
+
+          | foo | bar |
+          | --- | --- |
+          | baz | qux |
+          `,
+        output: [
+          {
+            issuetype: IssueType.STORY,
+            summary: 'Summary',
+            description: stripIndent`
+              description
+
+              || foo || bar ||
+              | baz | qux |
+            `,
+            parent: '1',
+            dev_team: 'team',
+            status: Status.OPEN,
+            priority: Priority.MINOR,
+            labels: undefined,
+            assignee: undefined,
+          },
+        ] satisfies (typeof Issue.Type)[],
+      },
     ])('$title', ({ input, output }) =>
       Effect.gen(function* () {
         const result = yield* parseMarkdownToIssues(input, {
